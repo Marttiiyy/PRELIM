@@ -1,0 +1,48 @@
+SELECT * FROM fact_sales;
+
+SELECT * FROM dim_product;
+
+
+SELECT
+	b.branch_city AS "City",
+	SUM(f.quantity * p.price) AS "Total Revenue"
+FROM fact_sales f
+JOIN dim_branch b ON f.branch_id = b.branch_id
+JOIN dim_product p ON f.product_id = p.product_id
+GROUP BY b.branch_city
+ORDER BY "Total Revenue" DESC;
+
+
+SELECT
+	p.product_line AS "Product Line",
+	SUM(f.quantity) AS "Total Quantity Sold"
+FROM fact_sales f
+JOIN dim_product p ON f.product_id = p.product_id
+GROUP BY p.product_line
+ORDER BY "Total Quantity Sold" DESC;
+
+
+SELECT 
+	c.customer_type AS "Customer Type",
+	COUNT(f.invoice_id) AS "Total Transactions",
+	SUM(f.quantity * p.price) AS "Total Spend"
+FROM fact_sales f
+JOIN dim_customer c ON f.customer_id = c.customer_id
+JOIN dim_product p ON f.product_id = p.product_id
+GROUP BY c.customer_type;
+
+SELECT 
+	b.branch_name AS "Branch Name",
+	ROUND(AVG(f.rating), 2) AS "Average Rating"
+FROM fact_sales f
+JOIN dim_branch b ON f.branch_id = b.branch_id
+GROUP BY b.branch_name
+ORDER BY "Average Rating" DESC;
+
+SELECT 
+	p.payment_type AS "Payment Method",
+	COUNT(f.invoice_id) AS "Usage Count"
+FROM fact_sales f
+JOIN dim_payment p ON f.payment = p.payment_id
+GROUP BY p.payment_type
+ORDER BY "Usage Count" DESC;
